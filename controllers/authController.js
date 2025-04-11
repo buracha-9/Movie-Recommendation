@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const User = require('../models/userModel'); // Assuming you have a user model
+const User = require('../models/userModel');
 
 // Login user and generate JWT token
 exports.loginUser = async (req, res) => {

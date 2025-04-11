@@ -22,6 +22,12 @@ const User = {
     return rows[0];
   },
 
+  // 🔐 Get user by email (for login)
+  findByEmail: async (email) => {
+    const [rows] = await pool.query('SELECT * FROM users WHERE email = ?', [email]);
+    return rows[0]; // Only return the first match
+  },
+
   // Update a user
   update: async (id, username, email, password, role) => {
     const [result] = await pool.query(

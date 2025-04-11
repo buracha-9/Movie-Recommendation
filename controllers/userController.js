@@ -1,11 +1,16 @@
+const bcrypt = require('bcryptjs');
 const User = require('../models/userModel');
 
 // Create a user (for registration)
 exports.createUser = async (req, res) => {
-  const { username, email, password, role } = req.body;
+  const { username, email, password, role = 'user' } = req.body; // Default to 'user' if no role is provided
 
   try {
-    const result = await User.create(username, email, password, role);
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Save the user with the hashed password and default role if not provided
+    const result = await User.create(username, email, hashedPassword, role);
     res.status(201).json({ message: 'User created successfully!', userId: result.insertId });
   } catch (err) {
     console.error(err);
@@ -44,10 +49,17 @@ exports.getUserById = async (req, res) => {
 // Update a user
 exports.updateUser = async (req, res) => {
   const { id } = req.params;
-  const { username, email, password, role } = req.body;
+  const { username, email, password, role = 'user' } = req.body; // Default to 'user' if no role is provided
 
   try {
-    const result = await User.update(id, username, email, password, role);
+    // If password is provided, hash it before updating
+    let hashedPassword = password;
+    if (password) {
+      hashedPassword = await bcrypt.hash(password, 10);
+    }
+
+    // Update the user with the hashed password and role (default 'user' if not provided)
+    const result = await User.update(id, username, email, hashedPassword, role);
     if (result.affectedRows > 0) {
       res.status(200).json({ message: 'User updated successfully' });
     } else {

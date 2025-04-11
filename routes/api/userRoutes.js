@@ -5,10 +5,10 @@ const authMiddleware = require('../../middlewares/authMiddleware');
 const { verifyAdmin } = require('../../middlewares/roleMiddleware');
 
 // Define routes for users
-router.post('/users', authMiddleware.authenticate, userController.createUser);
+router.post('/users', userController.createUser);
 router.get('/users', authMiddleware.authenticate, verifyAdmin, userController.getAllUsers);
-router.get('/users/:id', authMiddleware.authenticate, userController.getUserById);
-router.put('/users/:id', authMiddleware.authenticate, verifyAdmin, userController.updateUser);
+router.get('/users/:id', authMiddleware.authenticate, verifyAdmin, userController.getUserById);
+router.put('/users/:id', authMiddleware.authenticate, userController.updateUser);
 router.delete('/users/:id', authMiddleware.authenticate, verifyAdmin, userController.deleteUser);
 
 module.exports = router;
