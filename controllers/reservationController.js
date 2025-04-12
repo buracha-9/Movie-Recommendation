@@ -2,7 +2,7 @@ const Reservation = require('../models/reservationModel');
 
 // Create a reservation
 exports.createReservation = async (req, res) => {
-  const { user_id, showtime_id, seat_ids } = req.body;
+  const { user_id, showtime_id, seat_ids, status } = req.body;
 
   try {
     // Step 0: Check if any of the requested seats are already reserved for this showtime
@@ -16,7 +16,7 @@ exports.createReservation = async (req, res) => {
     }
 
     // Step 1: Create reservation record
-    const result = await Reservation.create(user_id, showtime_id);
+    const result = await Reservation.create(user_id, showtime_id, status);
 
     // Step 2: Assign seats to the reservation
     if (seat_ids && seat_ids.length > 0) {

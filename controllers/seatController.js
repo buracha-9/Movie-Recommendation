@@ -36,14 +36,10 @@ exports.bookSeat = async (req, res) => {
 
   try {
     const result = await Seat.bookSeat(seat_id);
-    if (result.affectedRows > 0) {
-      res.status(200).json({ message: 'Seat booked successfully' });
-    } else {
-      res.status(404).json({ message: 'Seat not found or already booked' });
-    }
+    res.status(200).json({ message: 'Seat booked successfully' });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: 'Error booking seat' });
+    res.status(500).json({ message: err.message });
   }
 };
 
@@ -53,13 +49,9 @@ exports.unbookSeat = async (req, res) => {
 
   try {
     const result = await Seat.unbookSeat(seat_id);
-    if (result.affectedRows > 0) {
-      res.status(200).json({ message: 'Seat unbooked successfully' });
-    } else {
-      res.status(404).json({ message: 'Seat not found or already available' });
-    }
+    res.status(200).json({ message: 'Seat unbooked successfully' });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: 'Error unbooking seat' });
+    res.status(500).json({ message: err.message });
   }
 };

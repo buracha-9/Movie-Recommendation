@@ -55,7 +55,9 @@ const pool = require('../config/db');
         showtime_id INT NOT NULL,
         seat_number VARCHAR(10) NOT NULL,
         is_booked BOOLEAN DEFAULT FALSE,
+        reservation_id INT DEFAULT NULL,
         FOREIGN KEY (showtime_id) REFERENCES showtimes(id) ON DELETE CASCADE,
+        FOREIGN KEY (reservation_id) REFERENCES reservations(id) ON DELETE SET NULL,
         UNIQUE (showtime_id, seat_number),
         INDEX (showtime_id)
       );

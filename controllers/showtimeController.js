@@ -1,4 +1,5 @@
 const Showtime = require('../models/showtimeModel');
+const Seat = require('../models/seatModel');
 
 exports.getAllShowtimes = async (req, res) => {
   try {
@@ -20,20 +21,38 @@ exports.getShowtimeById = async (req, res) => {
 };
 
 exports.createShowtime = async (req, res) => {
-  const { movie_id, start_time, room_id } = req.body;
+  const { movie_id, show_datetime, room_id, total_seats } = req.body;
+
+  if (!total_seats || total_seats <= 0) {
+    return res.status(400).json({
+      message: 'Invalid total_seats. It must be a positive integer.'
+    });
+  }
 
   try {
-    const conflict = await Showtime.isConflict(start_time, room_id);
+    const conflict = await Showtime.isConflict(show_datetime, room_id);
     if (conflict) {
       return res.status(400).json({
         message: 'Cannot schedule showtime. Conflict with existing show or not enough 2-hour gap.'
       });
     }
 
-    const result = await Showtime.create(movie_id, start_time, room_id);
-    res.status(201).json({ message: 'Showtime created successfully', showtimeId: result.insertId });
+    const result = await Showtime.create(movie_id, show_datetime, room_id, total_seats);
+    const showtimeId = result.insertId;
+
+    // ✅ Create seats for the showtime with is_booked = false
+    const seatPromises = [];
+    for (let i = 1; i <= total_seats; i++) {
+      seatPromises.push(Seat.create(showtimeId, i)); // seat_number = i
+    }
+    await Promise.all(seatPromises);
+
+    res.status(201).json({
+      message: 'Showtime and seats created successfully',
+      showtimeId: showtimeId
+    });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: 'Error creating showtime' });
+    res.status(500).json({ message: 'Error creating showtime and seats' });
   }
 };
